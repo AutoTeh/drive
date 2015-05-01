@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Edit extends CI_Controller {
+class Car extends CI_Controller {
 
 	/**
 	 * Index Page for this controller.
@@ -24,17 +24,37 @@ class Edit extends CI_Controller {
 
 		if(!$this->authldap->is_authenticated()) ? redirect('/', 'refresh');
 
+    	$this->load->model('car');
     }
 
-	public function index()
+	public function index($id = '')
 	{
-		$this->load->view('welcome_message');
+
+			if ($id == '') {
+                $data = Array(
+					"title" 	=> "Добавление машины",
+		            "page" 		=> "car",
+	                "url_form" 	=> "car/change/"
+                );
+
+            } Else {				$tempp = Array(
+					"title" 	=> "Редактирование машины",
+		            "page" 		=> "car",
+	                "url_form" 	=> "car/change/".$id,
+	                "AllCar" 	=>  $this->car->get_allcar()
+                );
+
+	            $data = array_merge ($tempp, $this->car->get_car($id));
+
+            }
+
+			$this->load->view('main', $data);
 	}
 
-	public function car()
+	public function change($id = '')
 	{
-			$data['title'] = "Добавление машины";
-            $data['page'] = 'edit/car';
+			if($id = '') ? $data['title'] = "Добавление машины" : $data['title'] = "Редактирование машины";
+			$data['page'] = 'car';
 
 			$this->form_validation->set_rules('marka', 'Marka', 'required');
 			$this->form_validation->set_rules('passengers', 'Passengers', 'required');
@@ -44,28 +64,13 @@ class Edit extends CI_Controller {
 
 	        if ($this->form_validation->run() == TRUE)
 	        {
-	        	$this->load->model('add/car');	        	$this->add->insert_car();
+	        	if($id = '') ? $this->car->insert_car(); : $this->car->update_car($id);
+	        	$data['page'] = 'formsuccess';
 	        }
 
 			$this->load->view('main', $data);
 	}
 
-	public function drive()
-	{
-			$data['title'] = "Добавление водителя";
-            $data['page'] = 'edit/drive';
 
-			$this->form_validation->set_rules('fio', 'Fio', 'required');
-			$this->form_validation->set_rules('phone', 'Phone', 'required');
-            $this->form_validation->set_rules('addCar', 'AddCar', 'required');
-
-	        if ($this->form_validation->run() == TRUE)
-	        {
-	        	$this->load->model('add/drive');
-	        	$this->add->insert_drive();
-	        }
-
-			$this->load->view('main', $data);
-	}
 
 }

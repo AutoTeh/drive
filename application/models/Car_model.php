@@ -26,7 +26,29 @@ class Car_model extends CI_Model {
                 $this->db->insert('Car', $this);
         }
 
-        public function update_car()
+        public function get_car($id = '')
+        {
+                $this->db->select('Marka, Passengers, Gos_Num, Color, Type_Car');
+                $this->db->where('ID_Car', $id);
+				$query = $this->db->get('Car');
+                return $query->result_array();
+        }
+
+        public function get_allcar()
+        {
+                $this->db->select('concat(Marka, ' ', Gos_Num) AS Description, ID_Car');
+				$query = $this->db->get('Car');
+
+
+				foreach ($query->result() as $row)
+				{
+				   $Temp_Array_Car[$row->ID_Car] = $row->Description;
+				}
+
+                return $Temp_Array_Car;
+        }
+
+        public function update_car($id = '')
         {
                 $this->$Marka 			= $this->input->post('marka');
 		        $this->$Passengers 		= $this->input->post('passengers');
@@ -34,7 +56,7 @@ class Car_model extends CI_Model {
 		        $this->$Color 			= $this->input->post('color');
 		        $this->$Type_Car 		= $this->input->post('typeCar');
 
-                $this->db->update('Car', $this, array('ID_Car' => $this->input->post('ID_Car')));
+                $this->db->update('Car', $this, array('ID_Car' => $id));
         }
 
 }

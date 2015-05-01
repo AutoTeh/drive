@@ -22,13 +22,21 @@ class Drive_model extends CI_Model {
                 $this->db->insert('Driver', $this);
         }
 
-        public function update_drive()
+        public function update_drive($id = '')
         {
                 $this->$FIO 		= $this->input->post('fio');
 		        $this->$Phone 		= $this->input->post('phone');
 		        $this->$ID_Car 		= $this->input->post('addCar');
 
-                $this->db->update('Driver', $this, array('ID_Driver' => $this->input->post('ID_Driver')));
+                $this->db->update('Driver', $this, array('ID_Driver' => $id));
+        }
+
+        public function get_drive($id = '')
+        {
+                $this->db->select('FIO, Phone, ID_Car');
+                $this->db->where('ID_Driver', $id);
+				$query = $this->db->get('Driver');
+                return $query->result_array();
         }
 
 }
